@@ -12,7 +12,7 @@ import ntpath
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        self.geometry("840x600")
+        self.geometry("1280x720")
         self.title("TrafficBeam")
         self.minsize(1280, 720)
         self.configure(fg_color='#1B2838')
@@ -33,7 +33,6 @@ class App(customtkinter.CTk):
 
         # declare variables 
 
-        self.routeTxt = ""
         self.isCarDetecting = customtkinter.BooleanVar(value=True)
         self.isTruckDetecting = customtkinter.BooleanVar(value=True)
         self.isMotorcycleDetecting = customtkinter.BooleanVar()
@@ -43,8 +42,12 @@ class App(customtkinter.CTk):
         self.isMotorcycleCounting = customtkinter.BooleanVar()
 
         # Configuração do vídeo e do contador de objetos
-        self.cap = cv2.VideoCapture("cars.mp4")
-        assert self.cap.isOpened(), "Error reading video file"
+        try:
+            self.cap = cv2.VideoCapture("TrafficBeam/cars.mp4")
+            assert self.cap.isOpened(), "Error reading video file"
+        except:
+            self.cap = cv2.VideoCapture("cars.mp4")
+            assert self.cap.isOpened(), "Error reading video file"
         self.w, self.h, fps = (int(self.cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -53,7 +56,7 @@ class App(customtkinter.CTk):
         self.counter = solutions.ObjectCounter(
             show=False,  # False para exibir diretamente no Tkinter
             region=self.region_points,
-            model="yolo11n.pt",
+            model="TrafficBeam/yolo11n.pt",
             classes=[2, 3, 7],  # classes para Carros, Motos e Caminhões
             device=self.device.index,
             show_in=False,
@@ -95,9 +98,6 @@ class App(customtkinter.CTk):
 
         self.videoSourceLabel = customtkinter.CTkLabel(self.titleFrame, text="Video ► cars.mp4", font=("YU Gothic UI Semibold", 15, "bold"), bg_color="#23364E", text_color="#E0E1E2")
         self.videoSourceLabel.grid(row=0, column=0, columnspan=1, padx=20, pady=10)
-
-        # backImage = customtkinter.CTkImage(light_image=Image.open('Assets/Images/BackBtnIcon.png'), size=(32, 32)) # WidthxHeight]
-        # self.backBtn = customtkinter.CTkButton(self.titleFrame, text="", width=32, height=32, fg_color="#2B2B2B").place(x=5, y=5)
 
     #Main Frame Widgets
         #Video Source
@@ -296,7 +296,7 @@ class App(customtkinter.CTk):
         self.counter = solutions.ObjectCounter(
             show=False,  # False para exibir diretamente no Tkinter
             region=self.region_points,
-            model="yolo11n.pt",
+            model="TrafficBeam/yolo11n.pt",
             classes=[selectedClasses],  # classes para Carros, Motos e Caminhões
             device=self.device.index,
             show_in=False,
